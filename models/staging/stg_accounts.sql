@@ -1,12 +1,20 @@
-with source as (
-    select * from {{ source('raw', 'accounts') }}
-)
+version: 2
 
-select
-    cast(account_id as integer)          as account_id,
-    trim(company_name)                   as account_name,
-    coalesce(trim(industry), 'Unknown')  as industry,
-    upper(trim(region))                  as region,
-    cast(signup_date as date)            as signup_date,
-    cast(updated_at as timestamp_ntz)    as updated_at
-from source
+models:
+  - name: stg_subscriptions
+    columns:
+      - name: subscription_id
+        data_tests:
+          - unique
+          - not_null
+      - name: subscription_status
+        data_tests:
+          - accepted_values:
+              values: ['active', 'churned']
+
+  - name: stg_tickets
+    columns:
+      - name: priority
+        data_tests:
+          - accepted_values:
+              values: ['urgent', 'high', 'medium', 'low']
