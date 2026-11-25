@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    database: CLOUDDESK
+    schema: RAW
+    tables:
+      - name: accounts
+      - name: subscriptions
+      - name: users
+      - name: tickets
