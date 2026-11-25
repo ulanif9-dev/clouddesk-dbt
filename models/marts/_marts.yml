@@ -1,20 +1,50 @@
-  - name: account_id
+  version: 2
+
+models:
+  - name: fct_tickets
+    description: "Support ticket fact table. One row per ticket, with resolution time and open status."
+    columns:
+      - name: ticket_id
+        description: "Ticket ID from the source system. Primary key."
+        data_tests:
+          - unique
+          - not_null
+      - name: account_id
+        description: "Account that opened the ticket. Joins to dim_account."
         data_tests:
           - not_null
           - relationships:
               to: ref('dim_account')
               field: account_id
+      - name: resolution_hours
+        description: "Hours from opened_at to closed_at. Null for open tickets."
+      - name: is_open
+        description: "True when the ticket status is open."
 
   - name: dim_account
+    description: "Account dimension. One row per account, with subscription and user totals. Placeholder MRR values (99999) are left out of active_mrr."
     columns:
       - name: account_id
+        description: "Account ID. Primary key."
         data_tests:
           - unique
           - not_null
+      - name: active_mrr
+        description: "Monthly recurring revenue from active subscriptions, without placeholder values."
+      - name: suspect_mrr_count
+        description: "Number of subscriptions with the placeholder MRR value 99999."
 
   - name: dim_subscription_history
+    description: "SCD Type 2 subscription dimension built from subscriptions_snapshot. One row per subscription version."
     columns:
       - name: subscription_version_key
+        description: "Surrogate key for one version of a subscription."
         data_tests:
           - unique
           - not_null
+      - name: valid_from
+        description: "Time this version became valid."
+      - name: valid_to
+        description: "Time this version stopped being valid. 9999-12-31 for the current version."
+      - name: is_current
+        description: "True for the current version of each subscription."
