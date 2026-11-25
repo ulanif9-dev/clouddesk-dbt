@@ -1,0 +1,20 @@
+  - name: account_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_account')
+              field: account_id
+
+  - name: dim_account
+    columns:
+      - name: account_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_subscription_history
+    columns:
+      - name: subscription_version_key
+        data_tests:
+          - unique
+          - not_null
